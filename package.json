@@ -7,8 +7,8 @@
   "types": "./typings/index.d.ts",
   "exports": {
     ".": {
-      "types": "./typings/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./typings/vite.config.multi.d.ts",
+      "import": "./dist/vite.config.multi.js"
     }
   },
   "type": "module",

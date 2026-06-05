@@ -1,3 +1,9 @@
+/**
+ * Vite Config Multi Entry Build System
+ * Provides a build system tp accept multiple entries in the one config with different plugins and configs
+ *
+ * @author danielr <danielr@electroteque.org>
+ */
 import { PluginOption, UserConfig } from 'vite';
 export interface PackageJson {
     name: string;
@@ -12,7 +18,6 @@ export interface EntryItem {
     description: string;
     name?: string;
     entryName?: string;
-    exclude_libraries?: string[];
     plugins?: PluginOption[];
 }
 export interface EntrySources {
