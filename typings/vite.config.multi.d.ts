@@ -4,7 +4,8 @@
  *
  * @author danielr <danielr@electroteque.org>
  */
-import { PluginOption, UserConfig } from 'vite';
+import { BuildEnvironmentOptions, PluginOption, UserConfig } from 'vite';
+export { vitePluginMultiManifest } from './vite-plugin-multi-manifest';
 export interface PackageJson {
     name: string;
     version: string;
@@ -39,6 +40,8 @@ export interface BuildConfig {
     mangle?: boolean;
     compress?: boolean;
     comments?: boolean;
+    minify?: BuildEnvironmentOptions["minify"];
+    manifest?: boolean | string;
 }
 export interface MultiConfig {
     entry: EntryItem | null;

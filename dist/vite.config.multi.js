@@ -1,4 +1,39 @@
-import path from "path";
+import path, { resolve } from "path";
+import { promises } from "fs";
+/**
+* Vite Config Multi Manifest Plugin
+* Append a distribution manifest from the multiple entries as the manifest is overwritten per build..
+* Put this plugin after vite-plugin-manifest-sri to get the manifest with the generated hash
+* 
+* @author danielr <danielr@electroteque.org>
+*/
+function vitePluginMultiManifest(manifestPath = path.resolve("build/manifest.json")) {
+	return {
+		name: "vite-plugin-multi-manifest",
+		enforce: "post",
+		async writeBundle(options, bundle) {
+			const [fileName, chunk] = Object.entries(bundle).filter(([key, entry]) => entry.type === "asset" && ["manifest.json", ".vite/manifest.json"].includes(key))[0];
+			if (!chunk) return;
+			let existingManifest = {};
+			try {
+				existingManifest = await promises.readFile(manifestPath, "utf-8").then(JSON.parse, () => void 0);
+			} catch (e) {}
+			const newManifest = await promises.readFile(resolve(options.dir, fileName), "utf-8").then(JSON.parse, () => void 0);
+			const mergedManifest = {
+				...existingManifest,
+				...newManifest
+			};
+			await promises.mkdir(path.dirname(manifestPath), { recursive: true });
+			await promises.writeFile(manifestPath, JSON.stringify(mergedManifest, null, 2));
+		}
+	};
+}
+/**
+* Vite Config Multi Entry Build System
+* Provides a build system tp accept multiple entries in the one config with different plugins and configs
+* 
+* @author danielr <danielr@electroteque.org>
+*/
 function getEntry(entries) {
 	const entryEnv = process.env.ENTRY && process.env.ENTRY;
 	const entrySource = entries[entryEnv];
@@ -22,6 +57,8 @@ function defineMultiConfig(mode, options) {
 		define: {},
 		mangle: true,
 		compress: true,
+		minify: true,
+		manifest: false,
 		comments: isDev ? true : false
 	}, options);
 	const cwd = process.cwd();
@@ -31,6 +68,11 @@ function defineMultiConfig(mode, options) {
 		input[entry.name] = entry.entry;
 		if (entry.entryName) config.entryName = entry.entryName;
 		if (entry.plugins) config.plugins.push(...entry.plugins);
+		let oxcMinify = {
+			mangle: config.mangle,
+			compress: config.compress
+		};
+		if (options.minify && options.minify == "terser") oxcMinify = void 0;
 		return {
 			entry,
 			config: {
@@ -44,10 +86,11 @@ function defineMultiConfig(mode, options) {
 					alias: config.alias
 				},
 				build: {
-					minify: false,
+					minify: isDev ? false : config.minify,
 					outDir: config.outDir,
 					emptyOutDir: false,
 					sourcemap: false,
+					manifest: !isDev ? config.manifest : false,
 					target: "esnext",
 					rolldownOptions: {
 						cwd,
@@ -59,10 +102,7 @@ function defineMultiConfig(mode, options) {
 							format: "es",
 							entryFileNames: config.entryName,
 							comments: config.comments,
-							minify: isDev ? false : {
-								mangle: false,
-								compress: true
-							}
+							minify: isDev ? false : oxcMinify
 						}
 					}
 				}
@@ -73,4 +113,4 @@ function defineMultiConfig(mode, options) {
 		config: {}
 	};
 }
-export { defineMultiConfig, getEntry };
+export { defineMultiConfig, getEntry, vitePluginMultiManifest };

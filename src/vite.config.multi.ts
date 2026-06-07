@@ -7,7 +7,11 @@
  */
 
 import path from 'path';
-import { PluginOption, UserConfig } from 'vite';
+import { BuildEnvironmentOptions, PluginOption, UserConfig } from 'vite';
+
+import { MinifyOptions } from 'rolldown';
+
+export { vitePluginMultiManifest } from './vite-plugin-multi-manifest';
 
 export interface PackageJson {
   name: string;
@@ -46,6 +50,8 @@ export interface BuildConfig {
   mangle?: boolean;
   compress?:boolean;
   comments?:boolean;
+  minify?: BuildEnvironmentOptions["minify"];
+  manifest?: boolean | string;
 }
 
 export interface MultiConfig {
@@ -90,6 +96,8 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
     define: {},
     mangle: true,
     compress: true,
+    minify: true,
+    manifest: false,
     comments: isDev ? true : false
   };
 
@@ -114,9 +122,12 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
       config.plugins!.push(...entry.plugins);
     } 
 
-    
+    let oxcMinify:boolean | "dce-only" | MinifyOptions | undefined  = { mangle: config.mangle, compress: config.compress };
 
-    
+    //disable oxc minify on rolldown if using terser. oxc does not compress strings as a "Feature" only terser does.
+    if (options.minify && options.minify == "terser") oxcMinify = undefined;
+
+  
     return {
       entry: entry,
       config: {
@@ -130,10 +141,11 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
           alias: config.alias,
         },
         build: {
-          minify: false,
+          minify: isDev ? false : config.minify,
           outDir: config.outDir,
           emptyOutDir: false,
           sourcemap: false,
+          manifest: !isDev ? config.manifest : false,
           target: 'esnext',
           rolldownOptions: {
             cwd: cwd,
@@ -147,7 +159,7 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
               format: 'es',
               entryFileNames: config.entryName,
               comments: config.comments,
-              minify: isDev ? false : { mangle: config.mangle, compress: config.compress }
+              minify: isDev ? false : oxcMinify
             },
           },
         },

@@ -1,6 +1,6 @@
 {
   "name": "vite-config-multi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A vite multi entry build system config helper",
   "main": "./dist/vite.config.multi.js",
   "module": "./dist/vite.config.multi.js",

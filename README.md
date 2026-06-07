@@ -1,6 +1,8 @@
 # vite-config-multi
 Vite config helper that supporta a multi entry build system
 
+A multi manifest plugin is provided to handle updating a distribution manifest with the multiple entries including hashes.
+
 ## Basic
 
 ```ts
@@ -60,4 +62,41 @@ npm run entry1:dev
 npm run entry1:build
 npm run entry2:dev
 npm run entry2:build
+```
+
+
+# Multi Manifest Plugin
+
+To support updating a distribution manifest from the multiple entries. Use the multi manifest plugin to take each generated manifest including hash
+then merge with the current distribution manifest.
+
+```
+import { defineMultiConfig, type BuildConfig, type EntryItem, type EntrySources, type PackageJson, vitePluginMultiManifest } from 'vite-config-multi';
+import manifestSRI from 'vite-plugin-manifest-sri'
+
+const config: BuildConfig = {
+  plugins: [
+    manifestSRI(),
+    vitePluginMultiManifest()
+  ],
+  entries: entries,
+  pkg: pkg,
+  external: [
+  ],
+  globals: {
+  },
+  alias: {
+  },
+};
+
+export default defineConfig(({ mode }) => {
+  return {
+    ...defineMultiConfig(mode, config).config,
+    ...{},
+  } as UserConfig;
+});
+
+...
+
+
 ```
