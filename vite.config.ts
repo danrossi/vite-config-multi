@@ -18,9 +18,7 @@ export default defineConfig(({ mode }) => {
         external: [
           "vite"
         ],
-        experimental: {
-              attachDebugInfo: 'none',
-        },
+     
         output: {
           
         }

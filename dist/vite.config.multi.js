@@ -1,5 +1,7 @@
 import path, { resolve } from "path";
-import { promises } from "fs";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createLogger } from "vite";
+//#region src/vite-plugin-multi-manifest.ts
 /**
 * Vite Config Multi Manifest Plugin
 * Append a distribution manifest from the multiple entries as the manifest is overwritten per build..
@@ -7,6 +9,7 @@ import { promises } from "fs";
 * 
 * @author danielr <danielr@electroteque.org>
 */
+var logger = createLogger();
 function vitePluginMultiManifest(manifestPath = path.resolve("build/manifest.json")) {
 	return {
 		name: "vite-plugin-multi-manifest",
@@ -16,18 +19,21 @@ function vitePluginMultiManifest(manifestPath = path.resolve("build/manifest.jso
 			if (!chunk) return;
 			let existingManifest = {};
 			try {
-				existingManifest = await promises.readFile(manifestPath, "utf-8").then(JSON.parse, () => void 0);
+				existingManifest = await readFile(manifestPath, "utf-8").then(JSON.parse, () => void 0);
 			} catch (e) {}
-			const newManifest = await promises.readFile(resolve(options.dir, fileName), "utf-8").then(JSON.parse, () => void 0);
+			const newManifest = await readFile(resolve(options.dir, fileName), "utf-8").then(JSON.parse, () => void 0);
 			const mergedManifest = {
 				...existingManifest,
 				...newManifest
 			};
-			await promises.mkdir(path.dirname(manifestPath), { recursive: true });
-			await promises.writeFile(manifestPath, JSON.stringify(mergedManifest, null, 2));
+			await mkdir(path.dirname(manifestPath), { recursive: true });
+			await writeFile(manifestPath, JSON.stringify(mergedManifest, null, 2));
+			logger.info(`Completed Updating Manifest ${manifestPath}`);
 		}
 	};
 }
+//#endregion
+//#region src/vite.config.multi.ts
 /**
 * Vite Config Multi Entry Build System
 * Provides a build system tp accept multiple entries in the one config with different plugins and configs
@@ -113,4 +119,5 @@ function defineMultiConfig(mode, options) {
 		config: {}
 	};
 }
+//#endregion
 export { defineMultiConfig, getEntry, vitePluginMultiManifest };
