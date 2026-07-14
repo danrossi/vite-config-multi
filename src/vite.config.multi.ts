@@ -7,7 +7,7 @@
  */
 
 import path from 'path';
-import { BuildEnvironmentOptions, PluginOption, UserConfig } from 'vite';
+import { BuildEnvironmentOptions, LibraryOptions, PluginOption, UserConfig } from 'vite';
 
 import { MinifyOptions } from 'rolldown';
 
@@ -28,6 +28,7 @@ export interface EntryItem {
   name?:string;
   entryName?:string;
   plugins?: PluginOption[];
+  lib?: LibraryOptions;
 }
 
 export interface EntrySources {
@@ -113,8 +114,13 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
   let entry: EntryItem | undefined = process.env.ENTRY && getEntry(config.entries || {}) || config.entry;
 
   if (entry) {
-    input[entry.name!] = entry.entry;
-      
+    let lib: LibraryOptions | undefined;
+    if (entry.lib) {
+        lib = entry.lib;
+    } else {
+      input[entry.name!] = entry.entry;
+    }
+    
 
     if (entry.entryName) config.entryName = entry.entryName;
 
@@ -147,6 +153,7 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
           sourcemap: false,
           manifest: !isDev ? config.manifest : false,
           target: 'esnext',
+          lib: lib,
           rolldownOptions: {
             cwd: cwd,
             input: input,
