@@ -4,7 +4,7 @@
  *
  * @author danielr <danielr@electroteque.org>
  */
-import { BuildEnvironmentOptions, PluginOption, UserConfig } from 'vite';
+import { BuildEnvironmentOptions, LibraryOptions, PluginOption, UserConfig } from 'vite';
 export { vitePluginMultiManifest } from './vite-plugin-multi-manifest';
 export interface PackageJson {
     name: string;
@@ -20,6 +20,7 @@ export interface EntryItem {
     name?: string;
     entryName?: string;
     plugins?: PluginOption[];
+    lib?: LibraryOptions;
 }
 export interface EntrySources {
     [key: string]: EntryItem;

@@ -5,5 +5,5 @@
  *
  * @author danielr <danielr@electroteque.org>
  */
-import type { Plugin } from 'vite';
+import { type Plugin } from 'vite';
 export declare function vitePluginMultiManifest(manifestPath?: string): Plugin;

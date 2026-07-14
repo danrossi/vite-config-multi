@@ -71,7 +71,9 @@ function defineMultiConfig(mode, options) {
 	const input = {};
 	let entry = process.env.ENTRY && getEntry(config.entries || {}) || config.entry;
 	if (entry) {
-		input[entry.name] = entry.entry;
+		let lib;
+		if (entry.lib) lib = entry.lib;
+		else input[entry.name] = entry.entry;
 		if (entry.entryName) config.entryName = entry.entryName;
 		if (entry.plugins) config.plugins.push(...entry.plugins);
 		let oxcMinify = {
@@ -98,6 +100,7 @@ function defineMultiConfig(mode, options) {
 					sourcemap: false,
 					manifest: !isDev ? config.manifest : false,
 					target: "esnext",
+					lib,
 					rolldownOptions: {
 						cwd,
 						input,
