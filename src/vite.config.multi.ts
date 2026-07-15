@@ -108,16 +108,18 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
   const cwd = process.cwd();
 
   
-  const input: InputItem = {};
+  
 
   //get entry from entries and ENTRY env or a single entry
   let entry: EntryItem | undefined = process.env.ENTRY && getEntry(config.entries || {}) || config.entry;
 
   if (entry) {
-    let lib: LibraryOptions | undefined;
+    let input: InputItem | undefined,
+    lib: LibraryOptions | undefined;
     if (entry.lib) {
         lib = entry.lib;
     } else if (entry.entry) {
+      input = {};
       input[entry.name!] = entry.entry;
     }
     

@@ -68,12 +68,14 @@ function defineMultiConfig(mode, options) {
 		comments: isDev ? true : false
 	}, options);
 	const cwd = process.cwd();
-	const input = {};
 	let entry = process.env.ENTRY && getEntry(config.entries || {}) || config.entry;
 	if (entry) {
-		let lib;
+		let input, lib;
 		if (entry.lib) lib = entry.lib;
-		else if (entry.entry) input[entry.name] = entry.entry;
+		else if (entry.entry) {
+			input = {};
+			input[entry.name] = entry.entry;
+		}
 		if (entry.entryName) config.entryName = entry.entryName;
 		if (entry.plugins) config.plugins.push(...entry.plugins);
 		let oxcMinify = {
