@@ -1,9 +1,3 @@
-/**
- * Vite Config Multi Entry Build System
- * Provides a build system tp accept multiple entries in the one config with different plugins and configs
- *
- * @author danielr <danielr@electroteque.org>
- */
 import { BuildEnvironmentOptions, LibraryOptions, PluginOption, UserConfig } from 'vite';
 export { vitePluginMultiManifest } from './vite-plugin-multi-manifest';
 export interface PackageJson {
