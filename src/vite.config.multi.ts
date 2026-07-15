@@ -23,7 +23,7 @@ export interface PackageJson {
 }
 
 export interface EntryItem {
-  entry: string;
+  entry?: string;
   description: string;
   name?:string;
   entryName?:string;
@@ -117,7 +117,7 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
     let lib: LibraryOptions | undefined;
     if (entry.lib) {
         lib = entry.lib;
-    } else {
+    } else if (entry.entry) {
       input[entry.name!] = entry.entry;
     }
     

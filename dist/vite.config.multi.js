@@ -73,7 +73,7 @@ function defineMultiConfig(mode, options) {
 	if (entry) {
 		let lib;
 		if (entry.lib) lib = entry.lib;
-		else input[entry.name] = entry.entry;
+		else if (entry.entry) input[entry.name] = entry.entry;
 		if (entry.entryName) config.entryName = entry.entryName;
 		if (entry.plugins) config.plugins.push(...entry.plugins);
 		let oxcMinify = {

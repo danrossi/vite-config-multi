@@ -15,7 +15,7 @@ export interface PackageJson {
     [key: string]: any;
 }
 export interface EntryItem {
-    entry: string;
+    entry?: string;
     description: string;
     name?: string;
     entryName?: string;
