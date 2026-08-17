@@ -133,7 +133,7 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
     let oxcMinify:boolean | "dce-only" | MinifyOptions | undefined  = { mangle: config.mangle, compress: config.compress };
 
     //disable oxc minify on rolldown if using terser. oxc does not compress strings as a "Feature" only terser does.
-    if (options.minify && options.minify == "terser") oxcMinify = undefined;
+    if (options.minify && options.minify == "terser" || !options.minify) oxcMinify = false;
 
   
     return {

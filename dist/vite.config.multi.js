@@ -82,7 +82,7 @@ function defineMultiConfig(mode, options) {
 			mangle: config.mangle,
 			compress: config.compress
 		};
-		if (options.minify && options.minify == "terser") oxcMinify = void 0;
+		if (options.minify && options.minify == "terser" || !options.minify) oxcMinify = false;
 		return {
 			entry,
 			config: {
