@@ -1,4 +1,5 @@
 import { BuildEnvironmentOptions, LibraryOptions, PluginOption, UserConfig } from 'vite';
+import { ModuleFormat } from 'rolldown';
 export { vitePluginMultiManifest } from './vite-plugin-multi-manifest';
 export interface PackageJson {
     name: string;
@@ -15,6 +16,9 @@ export interface EntryItem {
     entryName?: string;
     plugins?: PluginOption[];
     lib?: LibraryOptions;
+    alias?: any;
+    external?: string[];
+    format?: ModuleFormat;
 }
 export interface EntrySources {
     [key: string]: EntryItem;
@@ -37,6 +41,7 @@ export interface BuildConfig {
     comments?: boolean;
     minify?: BuildEnvironmentOptions["minify"];
     manifest?: boolean | string;
+    format?: ModuleFormat;
 }
 export interface MultiConfig {
     entry: EntryItem | null;

@@ -65,7 +65,8 @@ function defineMultiConfig(mode, options) {
 		compress: true,
 		minify: true,
 		manifest: false,
-		comments: isDev ? true : false
+		comments: isDev ? true : false,
+		format: "es"
 	}, options);
 	const cwd = process.cwd();
 	let entry = process.env.ENTRY && getEntry(config.entries || {}) || config.entry;
@@ -77,6 +78,9 @@ function defineMultiConfig(mode, options) {
 			input[entry.name] = entry.entry;
 		}
 		if (entry.entryName) config.entryName = entry.entryName;
+		if (entry.alias) config.alias = entry.alias;
+		if (entry.external) config.external = entry.external;
+		if (entry.format) config.format = entry.format;
 		if (entry.plugins) config.plugins.push(...entry.plugins);
 		let oxcMinify = {
 			mangle: config.mangle,
@@ -110,7 +114,7 @@ function defineMultiConfig(mode, options) {
 						experimental: { attachDebugInfo: isDev ? "full" : "none" },
 						output: {
 							globals: config.globals,
-							format: "es",
+							format: config.format,
 							entryFileNames: config.entryName,
 							comments: config.comments,
 							minify: isDev ? false : oxcMinify

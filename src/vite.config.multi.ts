@@ -9,7 +9,7 @@
 import path from 'path';
 import { BuildEnvironmentOptions, LibraryOptions, PluginOption, UserConfig } from 'vite';
 
-import { MinifyOptions } from 'rolldown';
+import { MinifyOptions, ModuleFormat } from 'rolldown';
 
 export { vitePluginMultiManifest } from './vite-plugin-multi-manifest';
 
@@ -29,6 +29,9 @@ export interface EntryItem {
   entryName?:string;
   plugins?: PluginOption[];
   lib?: LibraryOptions;
+  alias?: any;
+  external?: string[];
+  format?: ModuleFormat;
 }
 
 export interface EntrySources {
@@ -53,6 +56,7 @@ export interface BuildConfig {
   comments?:boolean;
   minify?: BuildEnvironmentOptions["minify"];
   manifest?: boolean | string;
+  format?: ModuleFormat;
 }
 
 export interface MultiConfig {
@@ -99,7 +103,8 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
     compress: true,
     minify: true,
     manifest: false,
-    comments: isDev ? true : false
+    comments: isDev ? true : false,
+    format: "es"
   };
 
 
@@ -125,6 +130,10 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
     
 
     if (entry.entryName) config.entryName = entry.entryName;
+
+    if (entry.alias) config.alias = entry.alias;
+    if (entry.external) config.external = entry.external;
+    if (entry.format) config.format = entry.format;
 
     if (entry.plugins) {
       config.plugins!.push(...entry.plugins);
@@ -165,7 +174,7 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
             },
             output: {
               globals: config.globals,
-              format: 'es',
+              format: config.format,
               entryFileNames: config.entryName,
               comments: config.comments,
               minify: isDev ? false : oxcMinify
