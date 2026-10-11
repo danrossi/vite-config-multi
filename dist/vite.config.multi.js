@@ -80,6 +80,7 @@ function defineMultiConfig(mode, options) {
 		if (entry.entryName) config.entryName = entry.entryName;
 		if (entry.alias) config.alias = entry.alias;
 		if (entry.external) config.external = entry.external;
+		if (entry.globals) config.globals = entry.globals;
 		if (entry.format) config.format = entry.format;
 		if (entry.plugins) config.plugins.push(...entry.plugins);
 		let oxcMinify = {

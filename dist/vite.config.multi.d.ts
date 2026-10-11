@@ -1,4 +1,4 @@
-import { BuildEnvironmentOptions, LibraryOptions, PluginOption, UserConfig } from 'vite';
+import { AliasOptions, BuildEnvironmentOptions, LibraryOptions, PluginOption, UserConfig } from 'vite';
 import { ModuleFormat } from 'rolldown';
 export { vitePluginMultiManifest } from './vite-plugin-multi-manifest';
 export interface PackageJson {
@@ -16,8 +16,9 @@ export interface EntryItem {
     entryName?: string;
     plugins?: PluginOption[];
     lib?: LibraryOptions;
-    alias?: any;
+    alias?: AliasOptions;
     external?: string[];
+    globals?: Record<string, string>;
     format?: ModuleFormat;
 }
 export interface EntrySources {
@@ -32,9 +33,9 @@ export interface BuildConfig {
     entry?: EntryItem;
     entryName?: string;
     pkg?: PackageJson;
-    alias?: any;
+    alias?: AliasOptions;
     external?: string[];
-    globals?: any;
+    globals?: Record<string, string>;
     define?: any;
     mangle?: boolean;
     compress?: boolean;

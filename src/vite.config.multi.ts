@@ -7,7 +7,7 @@
  */
 
 import path from 'path';
-import { BuildEnvironmentOptions, LibraryOptions, PluginOption, UserConfig } from 'vite';
+import { AliasOptions, BuildEnvironmentOptions, LibraryOptions, PluginOption, UserConfig } from 'vite';
 
 import { MinifyOptions, ModuleFormat } from 'rolldown';
 
@@ -29,8 +29,9 @@ export interface EntryItem {
   entryName?:string;
   plugins?: PluginOption[];
   lib?: LibraryOptions;
-  alias?: any;
+  alias?: AliasOptions;
   external?: string[];
+  globals?:Record<string, string>;
   format?: ModuleFormat;
 }
 
@@ -47,9 +48,9 @@ export interface BuildConfig {
   entry?: EntryItem;
   entryName?: string;
   pkg?: PackageJson;
-  alias?: any;
+  alias?: AliasOptions;
   external?: string[];
-  globals?: any;
+  globals?: Record<string, string>;
   define?: any;
   mangle?: boolean;
   compress?:boolean;
@@ -133,6 +134,7 @@ export function defineMultiConfig(mode: string, options: BuildConfig): MultiConf
 
     if (entry.alias) config.alias = entry.alias;
     if (entry.external) config.external = entry.external;
+    if (entry.globals) config.globals = entry.globals;
     if (entry.format) config.format = entry.format;
 
     if (entry.plugins) {
